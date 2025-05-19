@@ -1,5 +1,5 @@
 import { ApiPlans } from "@/constants/api";
-import { ApiArrayData, ApiObjectData, PageData } from "@/interfaces/api";
+import { ApiArrayData, ApiObjectData, PageData, Pagination } from "@/interfaces/api";
 
 export type StockData = ApiArrayData<{
   symbol: string;
@@ -33,3 +33,7 @@ export type Stock = StockQuoteDataItem & PriceDataItem & {
 };
 
 export type StockPageData = PageData<Stock>;
+
+export interface GetMonitorParams extends Pagination {
+  search?: string
+}

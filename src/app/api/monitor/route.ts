@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
   const {
     page: pageParam,
     perPage: perPageParam,
+    search,
     ...otherParams
   } = Object.fromEntries(request.nextUrl.searchParams.entries());
   const page = Number(pageParam ?? 1);
@@ -38,7 +39,9 @@ export async function GET(request: NextRequest) {
   }
 
   const availableData = stocksResponse.data.data.filter(
-    (item) => item.access.plan === ApiPlans.Basic
+    (item) =>
+      item.access.plan === ApiPlans.Basic &&
+      (!search || item.symbol.startsWith(search))
   );
 
   const pageData = getPageData(availableData, page, perPage);
@@ -79,7 +82,7 @@ export async function GET(request: NextRequest) {
         : currentPricesResponse.data[item];
 
       const change = Number(price.price) - Number(quote.open);
-      const changePercent = (change / Number(quote.open) * 100).toFixed(2)
+      const changePercent = ((change / Number(quote.open)) * 100).toFixed(2);
 
       return { ...quote, ...price, change: change.toFixed(2), changePercent };
     }),

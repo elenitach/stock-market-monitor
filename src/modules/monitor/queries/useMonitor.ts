@@ -2,11 +2,11 @@ import { QueryClient, useQuery, keepPreviousData } from "@tanstack/react-query";
 
 import { MonitorQueryKeys } from "./keys";
 import { monitorApi } from "../api/methods";
-import { Pagination } from "@/interfaces/api";
+import { GetMonitorParams } from "../api/interfaces";
 
-export const useMonitor = (params: Pagination) => {
+export const useMonitor = (params: GetMonitorParams) => {
   const state = useQuery({
-    queryKey: [MonitorQueryKeys.Monitor, {...params}],
+    queryKey: [MonitorQueryKeys.Monitor, { ...params }],
     queryFn: () => monitorApi.monitor(params),
     // refetchInterval: 60 * 1000,
     placeholderData: keepPreviousData,
@@ -15,7 +15,10 @@ export const useMonitor = (params: Pagination) => {
   return state;
 };
 
-export const prefetchMonitor = async (queryClient: QueryClient, params: Pagination) =>
+export const prefetchMonitor = async (
+  queryClient: QueryClient,
+  params: GetMonitorParams
+) =>
   queryClient.prefetchQuery({
     queryKey: [MonitorQueryKeys.Monitor, { ...params }],
     queryFn: () => monitorApi.monitor(params),
