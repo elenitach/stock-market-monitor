@@ -1,1 +1,1 @@
-export const DEFAULT_EXCHANGE = "MOEX";
+export const DEFAULT_EXCHANGE = "NASDAQ";

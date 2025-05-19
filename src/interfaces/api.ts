@@ -24,3 +24,8 @@ export interface ErrorResponse {
 export interface SuccessResponse<T> {
   data: T
 }
+
+export interface Pagination {
+  page: number
+  perPage: number
+}
