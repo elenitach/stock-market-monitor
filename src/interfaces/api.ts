@@ -20,3 +20,7 @@ export interface ErrorResponse {
   message: string
   code: number
 }
+
+export interface SuccessResponse<T> {
+  data: T
+}

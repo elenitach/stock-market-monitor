@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { api } from "@/config/api";
 import { API_URL, TWELVE_DATA_API_KEY } from "@/constants/env";
 import { ApiPlans, DEFAULT_PER_PAGE } from "@/constants/api";
-import { getPageData, isErrorResponse } from "@/helpers/api";
+import { getPageData } from "@/helpers/api";
 import { monitorEndpoints } from "@/modules/monitor/api/endpoints";
 import {
   PriceData,
@@ -14,6 +14,7 @@ import {
   isPriceDataItem,
   isStockQuoteDataItem,
 } from "@/modules/monitor/helpers/typeGuards";
+import { SuccessResponse } from "@/interfaces/api";
 
 export async function GET(request: NextRequest) {
   const {
@@ -24,18 +25,21 @@ export async function GET(request: NextRequest) {
   const page = Number(pageParam ?? 1);
   const perPage = Number(perPageParam ?? DEFAULT_PER_PAGE);
 
-  const stocksResponse = await api.get<StockData>({
-    apiUrl: API_URL,
-    path: monitorEndpoints.stocks(),
-    params: { ...otherParams, show_plan: true, apikey: TWELVE_DATA_API_KEY },
-    cache: "force-cache",
-  });
-
-  if (isErrorResponse(stocksResponse)) {
-    return Response.json(stocksResponse);
+  let stocksResponse: SuccessResponse<StockData>;
+  try {
+    stocksResponse = await api.get<StockData>({
+      apiUrl: API_URL,
+      path: monitorEndpoints.stocks(),
+      params: { ...otherParams, show_plan: true, apikey: TWELVE_DATA_API_KEY },
+      cache: "force-cache",
+    });
+  } catch (error) {
+    return Response.json(error);
   }
 
-  const availableData = stocksResponse.data.data.filter(item => item.access.plan === ApiPlans.Basic)
+  const availableData = stocksResponse.data.data.filter(
+    (item) => item.access.plan === ApiPlans.Basic
+  );
 
   const pageData = getPageData(availableData, page, perPage);
 
@@ -53,17 +57,15 @@ export async function GET(request: NextRequest) {
     params: { symbol: symbols, apikey: TWELVE_DATA_API_KEY },
   });
 
-  const [quotesResponse, currentPricesResponse] = await Promise.all([
-    quotesPromise,
-    currentPricesPromise,
-  ]);
-
-  if (isErrorResponse(quotesResponse)) {
-    return Response.json(quotesResponse)
-  }
-
-  if (isErrorResponse(currentPricesResponse)) {
-    return Response.json(currentPricesResponse);
+  let quotesResponse: SuccessResponse<StockQuoteData>;
+  let currentPricesResponse: SuccessResponse<PriceData>;
+  try {
+    [quotesResponse, currentPricesResponse] = await Promise.all([
+      quotesPromise,
+      currentPricesPromise,
+    ]);
+  } catch (error) {
+    return Response.json(error);
   }
 
   return Response.json({
@@ -76,7 +78,10 @@ export async function GET(request: NextRequest) {
         ? currentPricesResponse.data
         : currentPricesResponse.data[item];
 
-      return { ...quote, ...price };
+      const change = Number(price.price) - Number(quote.open);
+      const changePercent = (change / Number(quote.open) * 100).toFixed(2)
+
+      return { ...quote, ...price, change: change.toFixed(2), changePercent };
     }),
     meta: pageData.meta,
   } as StockPageData);

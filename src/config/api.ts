@@ -1,4 +1,3 @@
-import { ApiErrorMessages } from "@/constants/api";
 import { stringify } from "qs";
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -35,19 +34,14 @@ const request = async <TData>({
   }).then(async (res) => {
     const data = await res.json();
     if (['4', '5'].includes(`${res.status}`[0]) || (['4', '5'].includes(`${data.code}`[0]))) {
-      return {
+      return Promise.reject({
         code: data.code as number,
         message: data.message as string,
-      };
+      });
     }
     return {
       data: data as TData,
     };
-  }).catch(() => {
-    return {
-      code: 500,
-      message: ApiErrorMessages.FetchDataError
-    }
   });
 };
 

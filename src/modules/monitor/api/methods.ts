@@ -4,7 +4,7 @@ import { BASE_URL } from "@/constants/env";
 import { DEFAULT_EXCHANGE } from "../constants";
 
 const monitor = async () => {
-  const response = await api.get<StockPageData>({
+  const {data} = await api.get<StockPageData>({
     apiUrl: BASE_URL,
     path: "/api/monitor",
     params: {
@@ -12,7 +12,7 @@ const monitor = async () => {
     },
   });
 
-  return response;
+  return data;
 };
 
 export const monitorApi = {

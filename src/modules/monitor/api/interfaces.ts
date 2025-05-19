@@ -27,6 +27,9 @@ export interface PriceDataItem {
 
 export type PriceData = PriceDataItem | ApiObjectData<PriceDataItem>;
 
-export type Stock = StockQuoteDataItem & PriceDataItem;
+export type Stock = StockQuoteDataItem & PriceDataItem & {
+  change: string
+  changePercent: string
+};
 
 export type StockPageData = PageData<Stock>;
