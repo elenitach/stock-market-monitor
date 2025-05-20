@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
       const change = Number(price.price) - Number(quote.open);
       const changePercent = ((change / Number(quote.open)) * 100).toFixed(2);
 
-      return { ...quote, ...price, change: change.toFixed(2), changePercent };
+      return { ...quote, price: Number(price.price).toFixed(2), change: change.toFixed(2), changePercent };
     }),
     meta: pageData.meta,
   } as StockPageData;

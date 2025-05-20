@@ -32,11 +32,11 @@ export const MonitorPage: FC = () => {
 
   return (
     <PageContainer>
-      <Typography component="h1" marginBottom={3} variant="h3">
+      <Typography component="h1" marginBottom={4} variant="h4">
         Биржевой монитор
       </Typography>
       <Box>
-        <Box display="flex" gap={3} marginBottom={2}>
+        <Box display="flex" gap={3} marginBottom={4}>
           <MonitorSearch
             value={searchValue}
             onChange={(value) => setSearchValue(value)}

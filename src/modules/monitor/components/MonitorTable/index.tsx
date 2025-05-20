@@ -14,6 +14,7 @@ import {
 import { DEFAULT_PER_PAGE } from "@/constants/api";
 import { LoadingPanel } from "@/ui/LoadingPanel";
 import { StockPageData } from "../../api/interfaces";
+import { PriceChangeCell } from "./cells/PriceChangeCell";
 
 interface Props {
   data: StockPageData;
@@ -26,7 +27,7 @@ export const MonitorTable: FC<Props> = ({data, loading, page, setPage}) => {
   return (
     <Paper>
       <TableContainer sx={{ position: "relative" }}>
-        {(loading) && <LoadingPanel />}
+        {loading && <LoadingPanel />}
         <Table sx={{ minWidth: 650 }}>
           <TableHead>
             <TableRow>
@@ -39,14 +40,14 @@ export const MonitorTable: FC<Props> = ({data, loading, page, setPage}) => {
           </TableHead>
           <TableBody>
             {data.data.map((row) => (
-              <TableRow key={row.name}>
+              <TableRow key={row.symbol}>
                 <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
                 <TableCell>{row.symbol}</TableCell>
                 <TableCell>{row.price}</TableCell>
-                <TableCell>{row.change}</TableCell>
-                <TableCell>{row.changePercent}</TableCell>
+                <PriceChangeCell value={row.change} />
+                <PriceChangeCell value={row.changePercent} />
               </TableRow>
             ))}
           </TableBody>
