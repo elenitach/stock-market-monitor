@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Dispatch, SetStateAction } from "react";
+import { FC, Dispatch, SetStateAction, useState } from "react";
 import {
   TablePagination,
   Table,
@@ -15,6 +15,7 @@ import { DEFAULT_PER_PAGE } from "@/constants/api";
 import { LoadingPanel } from "@/ui/LoadingPanel";
 import { StockPageData } from "../../api/interfaces";
 import { PriceChangeCell } from "./cells/PriceChangeCell";
+import { StockInfoModal } from "../StockInfoModal";
 
 interface Props {
   data: StockPageData;
@@ -23,7 +24,9 @@ interface Props {
   setPage: Dispatch<SetStateAction<number>>;
 }
 
-export const MonitorTable: FC<Props> = ({data, loading, page, setPage}) => {
+export const MonitorTable: FC<Props> = ({ data, loading, page, setPage }) => {
+  const [symbol, setSymbol] = useState<string | null>(null);
+
   return (
     <Paper>
       <TableContainer sx={{ position: "relative" }}>
@@ -40,7 +43,14 @@ export const MonitorTable: FC<Props> = ({data, loading, page, setPage}) => {
           </TableHead>
           <TableBody>
             {data.data.map((row) => (
-              <TableRow key={row.symbol}>
+              <TableRow
+                key={row.symbol}
+                sx={{cursor: 'pointer'}}
+                onClick={() => {
+                  setSymbol(row.symbol);
+                }}
+                hover
+              >
                 <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
@@ -61,6 +71,9 @@ export const MonitorTable: FC<Props> = ({data, loading, page, setPage}) => {
         onPageChange={(_, newPage) => setPage(newPage + 1)}
         rowsPerPageOptions={[DEFAULT_PER_PAGE]}
       />
+      {symbol && (
+        <StockInfoModal onClose={() => setSymbol(null)} symbol={symbol} />
+      )}
     </Paper>
   );
 };

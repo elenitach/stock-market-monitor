@@ -39,3 +39,18 @@ export interface GetMonitorParams extends Pagination {
   search?: string
   stockType: StockTypes
 }
+
+export interface GetTimeSeriesParams {
+  symbol: string
+}
+
+export interface TimeSeriesData {
+  values: {
+    datetime: string;
+    open: string;
+    high: string;
+    low: string;
+    close: string;
+    volume: string;
+  }[];
+}

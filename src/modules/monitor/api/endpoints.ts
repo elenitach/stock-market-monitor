@@ -1,5 +1,6 @@
 export const monitorEndpoints = {
   stocks: () => "/stocks",
   quote: () => "/quote",
-  price: () => '/price'
+  price: () => "/price",
+  timeSeries: () => "/time_series",
 };

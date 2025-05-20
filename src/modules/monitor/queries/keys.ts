@@ -1,3 +1,4 @@
 export enum MonitorQueryKeys {
-  Monitor = 'monitor'
+  Monitor = "monitor",
+  TimeSeries = 'timeSeries'
 }

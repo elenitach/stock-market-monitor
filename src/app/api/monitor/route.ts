@@ -16,6 +16,7 @@ import {
 } from "@/modules/monitor/helpers/typeGuards";
 import { SuccessResponse } from "@/interfaces/api";
 import { StockTypes } from "@/modules/monitor/interfaces";
+import { round } from "@/helpers/math";
 
 export async function GET(request: NextRequest) {
   const {
@@ -84,9 +85,9 @@ export async function GET(request: NextRequest) {
         : currentPricesResponse.data[item];
 
       const change = Number(price.price) - Number(quote.open);
-      const changePercent = ((change / Number(quote.open)) * 100).toFixed(2);
+      const changePercent = ((change / Number(quote.open)) * 100);
 
-      return { ...quote, price: Number(price.price).toFixed(2), change: change.toFixed(2), changePercent };
+      return { ...quote, price: Number(price.price).toString(), change: round(change, 4).toString(), changePercent: round(changePercent, 4).toString() };
     }),
     meta: pageData.meta,
   } as StockPageData;
