@@ -15,12 +15,14 @@ import {
   isStockQuoteDataItem,
 } from "@/modules/monitor/helpers/typeGuards";
 import { SuccessResponse } from "@/interfaces/api";
+import { StockTypes } from "@/modules/monitor/interfaces";
 
 export async function GET(request: NextRequest) {
   const {
     page: pageParam,
     perPage: perPageParam,
     search,
+    stockType,
     ...otherParams
   } = Object.fromEntries(request.nextUrl.searchParams.entries());
   const page = Number(pageParam ?? 1);
@@ -71,7 +73,7 @@ export async function GET(request: NextRequest) {
     return Response.json(error);
   }
 
-  return Response.json({
+  const result = {
     data: symbols.map((item) => {
       const quote = isStockQuoteDataItem(quotesResponse.data)
         ? quotesResponse.data
@@ -87,5 +89,18 @@ export async function GET(request: NextRequest) {
       return { ...quote, ...price, change: change.toFixed(2), changePercent };
     }),
     meta: pageData.meta,
-  } as StockPageData);
+  } as StockPageData;
+
+  if (stockType !== StockTypes.All) {
+    // для фильтрации по типу акции нужны данные о всех акциях, которые за раз получить нельзя,
+    // поэтому для примера возвращаем акции текущей страницы, подходящие под фильтр
+    const filteredData = result.data.filter(
+      (item) =>
+        (Number(item.change) > 0 && stockType === StockTypes.Increasing) ||
+        (Number(item.change) < 0 && stockType === StockTypes.Decreasing)
+    );
+    return Response.json(getPageData(filteredData, 1, perPage));
+  }
+
+  return Response.json(result);
 }
