@@ -44,12 +44,16 @@ export async function GET(request: NextRequest) {
   const availableData = stocksResponse.data.data.filter(
     (item) =>
       item.access.plan === ApiPlans.Basic &&
-      (!search || item.symbol.startsWith(search))
+      (!search || item.symbol.toLowerCase().startsWith(search.toLowerCase()))
   );
 
   const pageData = getPageData(availableData, page, perPage);
 
   const symbols = pageData.data.map((item) => item.symbol);
+
+  if (!symbols.length) {
+    return Response.json(pageData);
+  }
 
   const quotesPromise = api.get<StockQuoteData>({
     apiUrl: API_URL,
@@ -85,9 +89,14 @@ export async function GET(request: NextRequest) {
         : currentPricesResponse.data[item];
 
       const change = Number(price.price) - Number(quote.open);
-      const changePercent = ((change / Number(quote.open)) * 100);
+      const changePercent = (change / Number(quote.open)) * 100;
 
-      return { ...quote, price: Number(price.price).toString(), change: round(change, 4).toString(), changePercent: round(changePercent, 4).toString() };
+      return {
+        ...quote,
+        price: Number(price.price).toString(),
+        change: round(change, 4).toString(),
+        changePercent: round(changePercent, 4).toString(),
+      };
     }),
     meta: pageData.meta,
   } as StockPageData;
