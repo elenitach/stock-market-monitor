@@ -9,3 +9,5 @@ export const stockTypeItems: SelectItem<StockTypes>[] = [
   { label: "Растущие", value: StockTypes.Increasing },
   { label: "Падающие", value: StockTypes.Decreasing },
 ];
+
+export const MONITOR_REFETCH_INTERVAL = 60 * 1000;
