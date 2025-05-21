@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { useMonitor } from "../../queries/useMonitor";
 import { Typography, Box } from "@mui/material";
 import { DEFAULT_PER_PAGE } from "@/constants/api";
@@ -9,6 +9,7 @@ import { StockTypeSelect } from "../StockTypeSelect";
 import { StockTypes } from "../../interfaces";
 import { MonitorTable } from "../MonitorTable";
 import { PageContainer } from "@/ui/PageContainer";
+import { invalidateTimeSeries } from "../../queries/useTimeSeries";
 
 export const MonitorPage: FC = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -21,6 +22,10 @@ export const MonitorPage: FC = () => {
     ...(!!searchValue && { search: searchValue }),
     stockType,
   });
+
+  useEffect(() => {
+    invalidateTimeSeries();
+  }, [data]);
 
   if (error) {
     return <Typography>{error.message}</Typography>;
