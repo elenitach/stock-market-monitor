@@ -27,37 +27,32 @@ export const MonitorPage: FC = () => {
     invalidateTimeSeries();
   }, [data]);
 
-  if (error) {
-    return <Typography>{error.message}</Typography>;
-  }
-
-  if (!data) {
-    return null;
-  }
-
   return (
     <PageContainer>
       <Typography component="h1" marginBottom={4} variant="h4">
         Биржевой монитор
       </Typography>
-      <Box>
-        <Box display="flex" gap={3} marginBottom={4}>
-          <MonitorSearch
-            value={searchValue}
-            onChange={(value) => setSearchValue(value)}
-          />
-          <StockTypeSelect
-            value={stockType}
-            onChange={(value) => setStockType(value)}
+      {error && <Typography>{error.message}</Typography>}
+      {data && (
+        <Box>
+          <Box display="flex" gap={3} marginBottom={4}>
+            <MonitorSearch
+              value={searchValue}
+              onChange={(value) => setSearchValue(value)}
+            />
+            <StockTypeSelect
+              value={stockType}
+              onChange={(value) => setStockType(value)}
+            />
+          </Box>
+          <MonitorTable
+            data={data}
+            loading={isFetching || isPending}
+            page={page}
+            setPage={setPage}
           />
         </Box>
-        <MonitorTable
-          data={data}
-          loading={isFetching || isPending}
-          page={page}
-          setPage={setPage}
-        />
-      </Box>
+      )}
     </PageContainer>
   );
 };

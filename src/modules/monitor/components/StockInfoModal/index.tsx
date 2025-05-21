@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const StockInfoModal: FC<Props> = ({ onClose, symbol }) => {
-  const { data, isLoading } = useTimeSeries({ symbol });
+  const { data, isLoading, error } = useTimeSeries({ symbol });
 
   const priceData = {
     values: data?.values.map((item) => Number(item.close)) ?? [],
@@ -83,6 +83,7 @@ export const StockInfoModal: FC<Props> = ({ onClose, symbol }) => {
       }}
     >
       {isLoading && <LoadingPanel />}
+      {error && error.message}
       {data && <Chart type="area" options={options as any} series={series} />}
     </Modal>
   );

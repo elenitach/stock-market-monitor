@@ -7,7 +7,7 @@ interface Props {
 
 export const PageContainer: FC<Props> = ({ children }) => {
   return (
-    <Container component="main" maxWidth="lg" sx={{ paddingTop: 2 }}>
+    <Container component="main" maxWidth="lg" sx={{ paddingTop: 2, paddingX: 2 }}>
       {children}
     </Container>
   );
